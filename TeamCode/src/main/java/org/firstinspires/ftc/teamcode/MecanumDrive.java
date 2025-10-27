@@ -64,31 +64,31 @@ public final class MecanumDrive {
 
         // drive model parameters
         public double inPerTick = FOXY_CONFIG.PARAMS.DRIVETRAIN.IN_PER_TICK;
-        public double lateralInPerTick = 0.0015756566599018744;
-        public double trackWidthTicks = 7870.2847123294805;
+        public double lateralInPerTick = FOXY_CONFIG.PARAMS.DRIVETRAIN.LATERAL_IN_PER_TICK;
+        public double trackWidthTicks = FOXY_CONFIG.PARAMS.DRIVETRAIN.TRACK_WIDTH_TICKS;
 
         // feedforward parameters (in tick units)
-        public double kS = 0.6205099688027516;
-        public double kV = 0.0003777139748533072;
-        public double kA = 0.0001;
+        public double kS = FOXY_CONFIG.PARAMS.DRIVETRAIN.kS;
+        public double kV = FOXY_CONFIG.PARAMS.DRIVETRAIN.kV;
+        public double kA = FOXY_CONFIG.PARAMS.DRIVETRAIN.kA;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 50;
-        public double minProfileAccel = -30;
-        public double maxProfileAccel = 50;
+        public double maxWheelVel = FOXY_CONFIG.PARAMS.DRIVETRAIN.MAX_WHEEL_VEL;
+        public double minProfileAccel = FOXY_CONFIG.PARAMS.DRIVETRAIN.MIN_PROFILE_ACCEL;
+        public double maxProfileAccel = FOXY_CONFIG.PARAMS.DRIVETRAIN.MAX_PROFILE_ACCEL;
 
         // turn profile parameters (in radians)
-        public double maxAngVel = Math.PI; // shared with path
-        public double maxAngAccel = Math.PI;
+        public double maxAngVel = FOXY_CONFIG.PARAMS.DRIVETRAIN.MAX_ANG_VEL; // shared with path
+        public double maxAngAccel = FOXY_CONFIG.PARAMS.DRIVETRAIN.MAX_ANG_ACCEL;
 
         // path controller gains
-        public double axialGain = 10;
-        public double lateralGain = 4;
-        public double headingGain = 6; // shared with turn
+        public double axialGain = FOXY_CONFIG.PARAMS.DRIVETRAIN.AXIAL_GAIN;
+        public double lateralGain = FOXY_CONFIG.PARAMS.DRIVETRAIN.LATERAL_GAIN;
+        public double headingGain = FOXY_CONFIG.PARAMS.DRIVETRAIN.HEADING_GAIN; // shared with turn
 
-        public double axialVelGain = 0.0;
-        public double lateralVelGain = 0.0;
-        public double headingVelGain = 0.0; // shared with turn
+        public double axialVelGain = FOXY_CONFIG.PARAMS.DRIVETRAIN.AXIAL_VEL_GAIN;
+        public double lateralVelGain = FOXY_CONFIG.PARAMS.DRIVETRAIN.LATERAL_VEL_GAIN;
+        public double headingVelGain = FOXY_CONFIG.PARAMS.DRIVETRAIN.HEADING_VEL_GAIN; // shared with turn
     }
 
     public static Params PARAMS = new Params();

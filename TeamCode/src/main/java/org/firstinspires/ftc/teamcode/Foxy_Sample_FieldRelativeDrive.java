@@ -36,6 +36,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.messages.PoseMessage;
+import java.lang.Math;
 
 /*
  * This OpMode illustrates how to program your robot to drive field relative.  This means
@@ -53,55 +54,32 @@ import org.firstinspires.ftc.teamcode.messages.PoseMessage;
  */
 @TeleOp(name = "Foxy: Field Relative Mecanum Drive", group = "Foxy")
 public class Foxy_Sample_FieldRelativeDrive extends OpMode {
-    // This declares the four motors needed
-    DcMotor frontLeftDrive;
-    DcMotor frontRightDrive;
-    DcMotor backLeftDrive;
-    DcMotor backRightDrive;
 
-    private ThreeDeadWheelLocalizer localizer;
-    public enum DRIVE_MODE {
-        ROBOT_RELATIVE,
-        FIELD_RELATIVE;
-    }
-    private DRIVE_MODE driveMode = DRIVE_MODE.FIELD_RELATIVE;
-
-    // This declares the IMU needed to get the current direction the robot is facing
-    //IMU imu;
+    Foxy_Robot myRobot;
 
     @Override
     public void init() {
-        frontLeftDrive = hardwareMap.get(DcMotor.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.MOTORS.FRONT_LEFT);
-        frontRightDrive = hardwareMap.get(DcMotor.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.MOTORS.FRONT_RIGHT);
-        backLeftDrive = hardwareMap.get(DcMotor.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.MOTORS.BACK_LEFT);
-        backRightDrive = hardwareMap.get(DcMotor.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.MOTORS.BACK_RIGHT);
+        // initialize myRobot
+        myRobot = new Foxy_Robot(hardwareMap);
 
-        // set brake mode on for firm stopping behavior
-        frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        // We set the left motors in reverse which is needed for drive trains where the left
-        // motors are opposite to the right ones.
-        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-
-        // TODO: get pose stored from AutonomousOp. for now initialize to 0,0,0
-        Pose2d initTelePose = new Pose2d(0,0,0);
+        // Pull initial pose from GlobalStorage. If no AutoOp has set the pose, it will
+        // default to 0,0,0
+        Pose2d initTelePose = FOXY_GLOBAL_STORAGE.currentPose;
         telemetry.addData("Initial TeleOp Pose: ", initTelePose);
-        telemetry.addData("Drive Mode: ", driveMode);
+        telemetry.addData("Drive Mode: ", myRobot.driveMode);
         telemetry.update();
 
-        localizer = new ThreeDeadWheelLocalizer(hardwareMap, FOXY_CONFIG.PARAMS.DRIVETRAIN.IN_PER_TICK, new Pose2d(0,0,0));
+        myRobot.localizer = new ThreeDeadWheelLocalizer(
+                hardwareMap,
+                FOXY_CONFIG.PARAMS.DRIVETRAIN.IN_PER_TICK,
+                initTelePose);
     }
 
     @Override
     public void loop() {
-        telemetry.addLine("Press A to reset Yaw");
-        telemetry.addLine("Press left bumper to toggle drive mode");
-        telemetry.addLine("The left joystick sets the robot direction");
-        telemetry.addLine("Moving the right joystick left and right turns the robot");
+        telemetry.addLine("A: reset Yaw");
+        telemetry.addLine("Left Bumper: field-relative");
+        telemetry.addLine("Right Bumper: robot-relative");
 
         // If you press the A button, then you reset the Yaw to be zero from the way
         // the robot is currently pointing
@@ -109,26 +87,26 @@ public class Foxy_Sample_FieldRelativeDrive extends OpMode {
            // imu.resetYaw();
 
             // call private method in this class
-            resetYaw(localizer);
+            resetYaw(myRobot.localizer);
         }
         // If you press the left bumper, set drive mode to FIELD_RELATIVE
         if (gamepad1.left_bumper) {
-            driveMode = DRIVE_MODE.FIELD_RELATIVE;
+            myRobot.driveMode = Foxy_Robot.DRIVE_MODE.FIELD_RELATIVE;
         }
 
         // If you press the right bumper, set drive mode to ROBOT_RELATIVE
         if (gamepad1.right_bumper) {
-            driveMode = DRIVE_MODE.ROBOT_RELATIVE;
+            myRobot.driveMode = Foxy_Robot.DRIVE_MODE.ROBOT_RELATIVE;
         }
 
-        telemetry.addData("Drive Mode: ", driveMode);
-        telemetry.addData("Current Heading: ", localizer.getPose().heading.toDouble());
+        telemetry.addData("Drive Mode: ", myRobot.driveMode);
+        telemetry.addData("Current Heading: ", Math.toDegrees(myRobot.localizer.getPose().heading.log()));
 
         telemetry.addData("drive Args(fwd):", -gamepad1.left_stick_y);
         telemetry.addData("drive Args(right):", gamepad1.left_stick_x);
         telemetry.addData("drive Args (rot):", gamepad1.right_stick_x);
 
-        if (driveMode == DRIVE_MODE.ROBOT_RELATIVE) {
+        if (myRobot.driveMode == Foxy_Robot.DRIVE_MODE.ROBOT_RELATIVE) {
             drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
         } else {
             driveFieldRelative(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
@@ -145,7 +123,7 @@ public class Foxy_Sample_FieldRelativeDrive extends OpMode {
 
         // Second, rotate angle by the angle the robot is pointing
         theta = AngleUnit.normalizeRadians(theta -
-                localizer.getPose().heading.toDouble());
+                myRobot.localizer.getPose().heading.log());
               //  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
 
         // Third, convert back to cartesian
@@ -180,10 +158,10 @@ public class Foxy_Sample_FieldRelativeDrive extends OpMode {
         // We multiply by maxSpeed so that it can be set lower for outreaches
         // When a young child is driving the robot, we may not want to allow full
         // speed.
-        frontLeftDrive.setPower(maxSpeed * (frontLeftPower / maxPower));
-        frontRightDrive.setPower(maxSpeed * (frontRightPower / maxPower));
-        backLeftDrive.setPower(maxSpeed * (backLeftPower / maxPower));
-        backRightDrive.setPower(maxSpeed * (backRightPower / maxPower));
+        myRobot.frontLeftDrive.setPower(maxSpeed * (frontLeftPower / maxPower));
+        myRobot.frontRightDrive.setPower(maxSpeed * (frontRightPower / maxPower));
+        myRobot.backLeftDrive.setPower(maxSpeed * (backLeftPower / maxPower));
+        myRobot.backRightDrive.setPower(maxSpeed * (backRightPower / maxPower));
     }
 
     private void resetYaw(Localizer localizer) {
@@ -195,7 +173,7 @@ public class Foxy_Sample_FieldRelativeDrive extends OpMode {
     }
 
     public PoseVelocity2d updatePoseEstimate() {
-        PoseVelocity2d vel = localizer.update();
+        PoseVelocity2d vel = myRobot.localizer.update();
 
         return vel;
     }
