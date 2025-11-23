@@ -1,16 +1,20 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.roadrunner.Pose2d;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 
 public class Foxy_Robot {
 
     // This declares the four motors needed
-    public DcMotor frontLeftDrive;
-    public DcMotor frontRightDrive;
-    public DcMotor backLeftDrive;
-    public DcMotor backRightDrive;
+    public DcMotorEx frontLeftDrive;
+    public DcMotorEx frontRightDrive;
+    public DcMotorEx backLeftDrive;
+    public DcMotorEx backRightDrive;
+
+    public IMU imu;
+
+    public HardwareMap hardwareMap;
 
     // RoadRunner localizer for odometry
     public ThreeDeadWheelLocalizer localizer;
@@ -27,21 +31,27 @@ public class Foxy_Robot {
 
     public Foxy_Robot(HardwareMap hardwareMap) {
 
+        // set the hardwareMap
+        this.hardwareMap = hardwareMap;
+
         // initialize drive motors
-        frontLeftDrive = hardwareMap.get(DcMotor.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.MOTORS.FRONT_LEFT);
-        frontRightDrive = hardwareMap.get(DcMotor.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.MOTORS.FRONT_RIGHT);
-        backLeftDrive = hardwareMap.get(DcMotor.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.MOTORS.BACK_LEFT);
-        backRightDrive = hardwareMap.get(DcMotor.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.MOTORS.BACK_RIGHT);
+        frontLeftDrive = hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.MOTORS.FRONT_LEFT);
+        frontRightDrive = hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.MOTORS.FRONT_RIGHT);
+        backLeftDrive = hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.MOTORS.BACK_LEFT);
+        backRightDrive = hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.MOTORS.BACK_RIGHT);
 
         // set brake mode on for firm stopping behavior
-        frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeftDrive.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        backLeftDrive.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        backRightDrive.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        frontRightDrive.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         // We set the left motors in reverse which is needed for drive trains where the left
         // motors are opposite to the right ones.
-        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        backLeftDrive.setDirection(DcMotorEx.Direction.REVERSE);
+        frontLeftDrive.setDirection(DcMotorEx.Direction.REVERSE);
+
+        // initialize the imu
+        imu = hardwareMap.get(IMU.class, FOXY_CONFIG.HARDWARE.SENSORS.IMU.PRIMARY);
     }
 }

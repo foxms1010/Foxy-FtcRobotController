@@ -17,21 +17,22 @@ public class Foxy_Auto_RRTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Pose2d beginPose = new Pose2d(0, 0, 0);
-
-        MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
+        Foxy_Robot myRobot = new Foxy_Robot(hardwareMap);
+        MecanumDrive drive = new MecanumDrive(myRobot, beginPose);
 
         waitForStart();
 
         Actions.runBlocking(
                 drive.actionBuilder(beginPose)
-                        .lineToX(30)
-                        .turn(Math.toRadians(90))
-                        .lineToY(30)
-                        .turn(Math.toRadians(90))
+//                        .lineToX(15)
+//                        .turn(Math.toRadians(90))
+//                        .lineToY(15)
+//                        .turn(Math.toRadians(90))
 //                        .lineToX(0)
 //                        .turn(Math.toRadians(90))
 //                        .lineToY(0)
 //                        .turn(Math.toRadians(90))
+                        .splineTo(new Vector2d(25,-25),Math.toRadians(-90))
                         .build());
 
         // store pose for use in later TeleOp modes

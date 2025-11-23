@@ -144,8 +144,8 @@ public class Foxy_Sample_FieldRelativeDrive extends OpMode {
         double backRightPower = forward + right - rotate;
         double backLeftPower = forward - right + rotate;
 
-        double maxPower = 1.0;
-        double maxSpeed = 1.0;  // make this slower for outreaches
+        double maxPower = FOXY_CONFIG.PARAMS.DRIVETRAIN.MAX_POWER;
+        double maxSpeed = FOXY_CONFIG.PARAMS.DRIVETRAIN.MAX_SPEED;  // make this slower for outreaches
 
         // This is needed to make sure we don't pass > 1.0 to any wheel
         // It allows us to keep all of the motors in proportion to what they should

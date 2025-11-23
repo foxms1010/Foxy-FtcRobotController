@@ -44,9 +44,9 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
 //        par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "par0")));
 //        par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "par1")));
 //        perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "perp")));
-        par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.Encoders.PARALLEL_LEFT)));
-        par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.Encoders.PARALLEL_RIGHT)));
-        perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.Encoders.PERPENDICULAR)));
+        par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.ENCODERS.PARALLEL_LEFT)));
+        par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.ENCODERS.PARALLEL_RIGHT)));
+        perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.ENCODERS.PERPENDICULAR)));
 
         // TODO-DONE: reverse encoder directions if needed
         perp.setDirection(DcMotorSimple.Direction.REVERSE);

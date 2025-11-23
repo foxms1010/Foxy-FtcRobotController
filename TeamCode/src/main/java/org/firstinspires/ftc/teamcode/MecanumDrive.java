@@ -89,6 +89,16 @@ public final class MecanumDrive {
         public double axialVelGain = FOXY_CONFIG.PARAMS.DRIVETRAIN.AXIAL_VEL_GAIN;
         public double lateralVelGain = FOXY_CONFIG.PARAMS.DRIVETRAIN.LATERAL_VEL_GAIN;
         public double headingVelGain = FOXY_CONFIG.PARAMS.DRIVETRAIN.HEADING_VEL_GAIN; // shared with turn
+
+        // constrain the power based on FOXY_CONFIG's settings of max power for motors (usually 1.0) and max speed throttle
+        public double MAX_POWER = FOXY_CONFIG.PARAMS.DRIVETRAIN.MAX_POWER;
+        public double MAX_SPEED = FOXY_CONFIG.PARAMS.DRIVETRAIN.MAX_SPEED;
+
+        // get wheel balance scalars from FOXY_CONFIG
+        public double scale_FL = FOXY_CONFIG.PARAMS.DRIVETRAIN.FRONT_LEFT_SCALAR;
+        public double scale_FR = FOXY_CONFIG.PARAMS.DRIVETRAIN.FRONT_RIGHT_SCALAR;
+        public double scale_BL = FOXY_CONFIG.PARAMS.DRIVETRAIN.BACK_LEFT_SCALAR;
+        public double scale_BR = FOXY_CONFIG.PARAMS.DRIVETRAIN.BACK_RIGHT_SCALAR;
     }
 
     public static Params PARAMS = new Params();
@@ -106,7 +116,9 @@ public final class MecanumDrive {
     public final AccelConstraint defaultAccelConstraint =
             new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
 
-    public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
+    // we need flexibility in these assignments due to using FoxyRobot. Remove 'final'
+   // public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
+    public DcMotorEx leftFront, leftBack, rightBack, rightFront;
 
     public final VoltageSensor voltageSensor;
 
@@ -215,14 +227,54 @@ public final class MecanumDrive {
             return twist.velocity().value();
         }
     }
+    
+    public MecanumDrive(Foxy_Robot myRobot, Pose2d pose) {
+        // if this constructor is used, we have a FoxyRobot - YAY :)
+        this(myRobot, null, pose, true);
+    }
 
+    // this is the original signature from RoadRunner
     public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
+        // if this constructor is used, a FoxyRobot has not been initialized
+        this(null, hardwareMap, pose, false);
+    }
+    
+    public MecanumDrive(Foxy_Robot myRobot, HardwareMap notFoxyHardwareMap, Pose2d pose, boolean usingFoxyRobot) {
+        HardwareMap hardwareMap = usingFoxyRobot ? myRobot.hardwareMap : notFoxyHardwareMap;
+        
+        if (usingFoxyRobot) {
+            // we have a FOXY ROBOT :)
+            leftFront = myRobot.frontLeftDrive;
+            leftBack = myRobot.backLeftDrive;
+            rightBack = myRobot.backRightDrive;
+            rightFront = myRobot.frontRightDrive;
+        }
+        else {
+            // initialize hardware
+            initHardware(hardwareMap);
+        }
+
         LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
+        // TODO-DONE: make sure your config has an IMU with this name (can be BNO or BHI)
+        //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
+        lazyImu = new LazyHardwareMapImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
+                PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
+
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();
+
+        // localizer = new DriveLocalizer(pose);
+        localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick, pose);
+
+        FlightRecorder.write("MECANUM_PARAMS", PARAMS);
+    }
+
+    // new method to initialize the hardware in case MecanumDrive is setup with using FoxyRobot
+    private void initHardware(HardwareMap hardwareMap) {
         // TODO-DONE: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         leftFront = hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.MOTORS.FRONT_LEFT);
@@ -238,33 +290,21 @@ public final class MecanumDrive {
         // TODO-DONE: reverse motor directions if needed
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        // TODO-DONE: make sure your config has an IMU with this name (can be BNO or BHI)
-        //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        lazyImu = new LazyHardwareMapImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
-                PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
-
-        voltageSensor = hardwareMap.voltageSensor.iterator().next();
-
-        // localizer = new DriveLocalizer(pose);
-        localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick, pose);
-
-        FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
 
     public void setDrivePowers(PoseVelocity2d powers) {
         MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(1).inverse(
                 PoseVelocity2dDual.constant(powers, 1));
 
-        double maxPowerMag = 1;
+        double maxPowerMag = PARAMS.MAX_POWER;
         for (DualNum<Time> power : wheelVels.all()) {
             maxPowerMag = Math.max(maxPowerMag, power.value());
         }
 
-        leftFront.setPower(wheelVels.leftFront.get(0) / maxPowerMag);
-        leftBack.setPower(wheelVels.leftBack.get(0) / maxPowerMag);
-        rightBack.setPower(wheelVels.rightBack.get(0) / maxPowerMag);
-        rightFront.setPower(wheelVels.rightFront.get(0) / maxPowerMag);
+        leftFront.setPower(PARAMS.scale_FL * PARAMS.MAX_SPEED * wheelVels.leftFront.get(0) / maxPowerMag);
+        leftBack.setPower(PARAMS.scale_BL * PARAMS.MAX_SPEED * wheelVels.leftBack.get(0) / maxPowerMag);
+        rightBack.setPower(PARAMS.scale_BR * PARAMS.MAX_SPEED * wheelVels.rightBack.get(0) / maxPowerMag);
+        rightFront.setPower(PARAMS.scale_FR * PARAMS.MAX_SPEED * wheelVels.rightFront.get(0) / maxPowerMag);
     }
 
     public final class FollowTrajectoryAction implements Action {
@@ -331,6 +371,12 @@ public final class MecanumDrive {
             mecanumCommandWriter.write(new MecanumCommandMessage(
                     voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
             ));
+
+            // apply FOXY scalars to balance the motors
+            leftFrontPower *= PARAMS.scale_FL;
+            leftBackPower *= PARAMS.scale_BL;
+            rightBackPower *= PARAMS.scale_BR;
+            rightFrontPower *= PARAMS.scale_FR;
 
             leftFront.setPower(leftFrontPower);
             leftBack.setPower(leftBackPower);
