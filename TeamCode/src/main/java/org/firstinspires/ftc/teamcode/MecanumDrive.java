@@ -63,32 +63,32 @@ public final class MecanumDrive {
                 RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
 
         // drive model parameters
-        public double inPerTick = FOXY_CONFIG.PARAMS.DRIVETRAIN.IN_PER_TICK;
-        public double lateralInPerTick = FOXY_CONFIG.PARAMS.DRIVETRAIN.LATERAL_IN_PER_TICK;
-        public double trackWidthTicks = FOXY_CONFIG.PARAMS.DRIVETRAIN.TRACK_WIDTH_TICKS;
+        public double inPerTick = FOXY_CONFIG.PARAMS_DRIVETRAIN_IN_PER_TICK;
+        public double lateralInPerTick = FOXY_CONFIG.PARAMS_DRIVETRAIN_LATERAL_IN_PER_TICK;
+        public double trackWidthTicks = FOXY_CONFIG.PARAMS_DRIVETRAIN_TRACK_WIDTH_TICKS;
 
         // feedforward parameters (in tick units)
-        public double kS = FOXY_CONFIG.PARAMS.DRIVETRAIN.kS;
-        public double kV = FOXY_CONFIG.PARAMS.DRIVETRAIN.kV;
-        public double kA = FOXY_CONFIG.PARAMS.DRIVETRAIN.kA;
+        public double kS = FOXY_CONFIG.PARAMS_DRIVETRAIN_kS;
+        public double kV = FOXY_CONFIG.PARAMS_DRIVETRAIN_kV;
+        public double kA = FOXY_CONFIG.PARAMS_DRIVETRAIN_kA;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = FOXY_CONFIG.PARAMS.DRIVETRAIN.MAX_WHEEL_VEL;
-        public double minProfileAccel = FOXY_CONFIG.PARAMS.DRIVETRAIN.MIN_PROFILE_ACCEL;
-        public double maxProfileAccel = FOXY_CONFIG.PARAMS.DRIVETRAIN.MAX_PROFILE_ACCEL;
+        public double maxWheelVel = FOXY_CONFIG.PARAMS_DRIVETRAIN_MAX_WHEEL_VEL;
+        public double minProfileAccel = FOXY_CONFIG.PARAMS_DRIVETRAIN_MIN_PROFILE_ACCEL;
+        public double maxProfileAccel = FOXY_CONFIG.PARAMS_DRIVETRAIN_MAX_PROFILE_ACCEL;
 
         // turn profile parameters (in radians)
-        public double maxAngVel = FOXY_CONFIG.PARAMS.DRIVETRAIN.MAX_ANG_VEL; // shared with path
-        public double maxAngAccel = FOXY_CONFIG.PARAMS.DRIVETRAIN.MAX_ANG_ACCEL;
+        public double maxAngVel = FOXY_CONFIG.PARAMS_DRIVETRAIN_MAX_ANG_VEL; // shared with path
+        public double maxAngAccel = FOXY_CONFIG.PARAMS_DRIVETRAIN_MAX_ANG_ACCEL;
 
         // path controller gains
-        public double axialGain = FOXY_CONFIG.PARAMS.DRIVETRAIN.AXIAL_GAIN;
-        public double lateralGain = FOXY_CONFIG.PARAMS.DRIVETRAIN.LATERAL_GAIN;
-        public double headingGain = FOXY_CONFIG.PARAMS.DRIVETRAIN.HEADING_GAIN; // shared with turn
+        public double axialGain = FOXY_CONFIG.PARAMS_DRIVETRAIN_AXIAL_GAIN;
+        public double lateralGain = FOXY_CONFIG.PARAMS_DRIVETRAIN_LATERAL_GAIN;
+        public double headingGain = FOXY_CONFIG.PARAMS_DRIVETRAIN_HEADING_GAIN; // shared with turn
 
-        public double axialVelGain = FOXY_CONFIG.PARAMS.DRIVETRAIN.AXIAL_VEL_GAIN;
-        public double lateralVelGain = FOXY_CONFIG.PARAMS.DRIVETRAIN.LATERAL_VEL_GAIN;
-        public double headingVelGain = FOXY_CONFIG.PARAMS.DRIVETRAIN.HEADING_VEL_GAIN; // shared with turn
+        public double axialVelGain = FOXY_CONFIG.PARAMS_DRIVETRAIN_AXIAL_VEL_GAIN;
+        public double lateralVelGain = FOXY_CONFIG.PARAMS_DRIVETRAIN_LATERAL_VEL_GAIN;
+        public double headingVelGain = FOXY_CONFIG.PARAMS_DRIVETRAIN_HEADING_VEL_GAIN; // shared with turn
     }
 
     public static Params PARAMS = new Params();
@@ -225,10 +225,10 @@ public final class MecanumDrive {
 
         // TODO-DONE: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        leftFront = hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.MOTORS.FRONT_LEFT);
-        leftBack = hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.MOTORS.BACK_LEFT);
-        rightBack = hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.MOTORS.BACK_RIGHT);
-        rightFront = hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.MOTORS.FRONT_RIGHT);
+        leftFront = hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HW_DRIVE_MOTORS_FRONT_LEFT);
+        leftBack = hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HW_DRIVE_MOTORS_BACK_LEFT);
+        rightBack = hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HW_DRIVE_MOTORS_BACK_RIGHT);
+        rightFront = hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HW_DRIVE_MOTORS_FRONT_RIGHT);
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

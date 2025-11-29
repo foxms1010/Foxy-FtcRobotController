@@ -22,9 +22,9 @@ import org.firstinspires.ftc.teamcode.messages.ThreeDeadWheelInputsMessage;
 @Config
 public final class ThreeDeadWheelLocalizer implements Localizer {
     public static class Params {
-        public double par0YTicks = FOXY_CONFIG.PARAMS.DEADWHEELS.PAR_0_TICKS; // y position of the first parallel encoder (in tick units)
-        public double par1YTicks = FOXY_CONFIG.PARAMS.DEADWHEELS.PAR_1_TICKS; // y position of the second parallel encoder (in tick units)
-        public double perpXTicks = FOXY_CONFIG.PARAMS.DEADWHEELS.PERP_TICKS; // x position of the perpendicular encoder (in tick units)
+        public double par0YTicks = FOXY_CONFIG.PARAMS_DEADWHEELS_PAR_0_TICKS; // y position of the first parallel encoder (in tick units)
+        public double par1YTicks = FOXY_CONFIG.PARAMS_DEADWHEELS_PAR_1_TICKS; // y position of the second parallel encoder (in tick units)
+        public double perpXTicks = FOXY_CONFIG.PARAMS_DEADWHEELS_PERP_TICKS; // x position of the perpendicular encoder (in tick units)
     }
 
     public static Params PARAMS = new Params();
@@ -44,9 +44,9 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
 //        par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "par0")));
 //        par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "par1")));
 //        perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "perp")));
-        par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.Encoders.PARALLEL_LEFT)));
-        par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.Encoders.PARALLEL_RIGHT)));
-        perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.Encoders.PERPENDICULAR)));
+        par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HW_DRIVE_ENCODERS_PARALLEL_LEFT)));
+        par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HW_DRIVE_ENCODERS_PARALLEL_RIGHT)));
+        perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, FOXY_CONFIG.HW_DRIVE_ENCODERS_PERPENDICULAR)));
 
         // TODO-DONE: reverse encoder directions if needed
         perp.setDirection(DcMotorSimple.Direction.REVERSE);

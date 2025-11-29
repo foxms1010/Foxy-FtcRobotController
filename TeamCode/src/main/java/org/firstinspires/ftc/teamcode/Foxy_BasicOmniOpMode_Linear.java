@@ -77,10 +77,10 @@ public class Foxy_BasicOmniOpMode_Linear extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        frontLeftDrive = hardwareMap.get(DcMotor.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.MOTORS.FRONT_LEFT);
-        backLeftDrive = hardwareMap.get(DcMotor.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.MOTORS.BACK_LEFT);
-        frontRightDrive = hardwareMap.get(DcMotor.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.MOTORS.FRONT_RIGHT);
-        backRightDrive = hardwareMap.get(DcMotor.class, FOXY_CONFIG.HARDWARE.DRIVETRAIN.MOTORS.BACK_RIGHT);
+        frontLeftDrive = hardwareMap.get(DcMotor.class, FOXY_CONFIG.HW_DRIVE_MOTORS_FRONT_LEFT);
+        backLeftDrive = hardwareMap.get(DcMotor.class, FOXY_CONFIG.HW_DRIVE_MOTORS_BACK_LEFT);
+        frontRightDrive = hardwareMap.get(DcMotor.class, FOXY_CONFIG.HW_DRIVE_MOTORS_FRONT_RIGHT);
+        backRightDrive = hardwareMap.get(DcMotor.class, FOXY_CONFIG.HW_DRIVE_MOTORS_BACK_RIGHT);
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
